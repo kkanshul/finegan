@@ -1,3 +1,2 @@
 # FineGAN
-
-# Code coming soon..
+Code coming soon..
