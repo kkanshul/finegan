@@ -85,6 +85,6 @@ If you find this code useful in your research, consider citing our work:
 }
 ```
 ## Acknowledgement
-This project is built upon [StackGAN-v2](https://github.com/hanzhanggit/StackGAN-v2). So we thank the authors of [StackGAN++: Realistic Image Synthesis with Stacked Generative Adversarial Networks](https://arxiv.org/abs/1710.10916) for releasing their source code.
+We thank the authors of [StackGAN++: Realistic Image Synthesis with Stacked Generative Adversarial Networks](https://arxiv.org/abs/1710.10916) for releasing their source code.
 ## Contact 
 For any questions regarding our paper or code, contact [Krishna Kumar Singh](mailto:krsingh@ucdavis.edu) and [Utkarsh Ojha](uojha@ucdavis.edu).
