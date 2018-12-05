@@ -45,7 +45,7 @@ Pretrained generator models for CUB, Stanford Dogs are available at this [link](
 ```bash
 cd models
 unzip netG.zip
-cd ..
+cd ../code/
 ```
 ## Evaluating the model
 In `cfg/eval.yml`:
