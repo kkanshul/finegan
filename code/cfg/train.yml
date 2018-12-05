@@ -1,0 +1,29 @@
+CONFIG_NAME: '3stages'
+DATASET_NAME: 'birds'
+DATA_DIR: '../data/birds'
+SAVE_DIR: '../output/vis'
+GPU_ID: '0'
+WORKERS: 4
+
+SUPER_CATEGORIES: 20   # For CUB 
+FINE_GRAINED_CATEGORIES: 200  # For CUB
+TIED_CODES: True   # Do NOT change this to False during training.
+
+TREE:
+    BRANCH_NUM: 3
+
+TRAIN:
+    FLAG: True
+    NET_G: ''  # Specify the generator path to resume training
+    NET_D: ''  # Specify the discriminator path to resume training
+    BATCH_SIZE: 16
+    MAX_EPOCH: 600
+    SNAPSHOT_INTERVAL: 4000
+    DISCRIMINATOR_LR: 0.0002
+    GENERATOR_LR: 0.0002
+
+GAN:
+    DF_DIM: 64
+    GF_DIM: 64
+    Z_DIM: 100
+    R_NUM: 2
