@@ -3,6 +3,7 @@ from six.moves import range
 import sys
 import numpy as np
 import os
+import random
 import time
 from PIL import Image
 from copy import deepcopy
@@ -374,6 +375,8 @@ class FineGAN_trainer(object):
         noise = Variable(torch.FloatTensor(self.batch_size, nz))
         fixed_noise = \
             Variable(torch.FloatTensor(self.batch_size, nz).normal_(0, 1))
+        hard_noise = \
+            Variable(torch.FloatTensor(self.batch_size, nz).normal_(0, 1)).cuda()
 	
 	self.patch_stride = float(4)    # Receptive field stride given the current discriminator architecture for background stage 
 	self.n_out = 24                 # Output size of the discriminator at the background stage; N X N where N = 24
@@ -387,14 +390,15 @@ class FineGAN_trainer(object):
             self.real_labels = self.real_labels.cuda()
             self.fake_labels = self.fake_labels.cuda()
             noise, fixed_noise = noise.cuda(), fixed_noise.cuda()
-
+        
+        print ("Starting normal FineGAN training..") 
         count = start_count
         start_epoch = start_count // (self.num_batches)
+
         for epoch in range(start_epoch, self.max_epoch):
             start_t = time.time()
-
+            
             for step, data in enumerate(self.data_loader, 0):
-
                
                 self.imgs_tcpu, self.real_fimgs, self.real_cimgs, \
                     self.c_code, self.warped_bbox = self.prepare_data(data)
@@ -441,6 +445,110 @@ class FineGAN_trainer(object):
                   % (epoch, self.max_epoch, self.num_batches,
                      errD_total.data[0], errG_total.data[0],
                      end_t - start_t))
+
+        save_model(self.netG, avg_param_G, self.netsD, count, self.model_dir)
+
+	print ("Done with the normal training. Now performing hard negative training..")
+        count = 0
+        start_t = time.time()
+        for step, data in enumerate(self.data_loader, 0):
+
+            self.imgs_tcpu, self.real_fimgs, self.real_cimgs, \
+                self.c_code, self.warped_bbox = self.prepare_data(data)
+
+            if (count % 2) == 0: # Train on normal batch of images
+
+                    # Feedforward through Generator. Obtain stagewise fake images
+                    noise.data.normal_(0, 1)
+                    self.fake_imgs, self.fg_imgs, self.mk_imgs, self.fg_mk = \
+                        self.netG(noise, self.c_code)
+
+                    self.p_code = child_to_parent(self.c_code, cfg.FINE_GRAINED_CATEGORIES, cfg.SUPER_CATEGORIES)
+
+                    # Update discriminator networks
+                    errD_total = 0
+                    for i in range(self.num_Ds):
+                            if i == 0 or i == 2:
+                                    errD = self.train_Dnet(i, count)
+                                    errD_total += errD
+
+
+                    # Update the generator network
+                    errG_total = self.train_Gnet(count)
+
+            else: # Train on degenerate images
+                    repeat_times=10
+                    all_hard_z = Variable(torch.zeros(self.batch_size * repeat_times, nz)).cuda()
+                    all_hard_class = Variable(torch.zeros(self.batch_size * repeat_times, cfg.FINE_GRAINED_CATEGORIES)).cuda()
+                    all_logits = Variable(torch.zeros(self.batch_size * repeat_times,)).cuda()
+                    
+                    for hard_it in range(repeat_times):
+                            hard_noise = hard_noise.data.normal_(0,1)
+                            hard_class = Variable(torch.zeros([self.batch_size, cfg.FINE_GRAINED_CATEGORIES])).cuda()
+                            my_rand_id=[]
+
+                            for c_it in range(self.batch_size):
+                                    rand_class = random.sample(range(cfg.FINE_GRAINED_CATEGORIES),1);
+                                    hard_class[c_it][rand_class] = 1
+                                    my_rand_id.append(rand_class)
+
+                            all_hard_z[self.batch_size * hard_it : self.batch_size * (hard_it + 1)] = hard_noise.data
+                            all_hard_class[self.batch_size * hard_it : self.batch_size * (hard_it + 1)] = hard_class.data
+                            self.fake_imgs, self.fg_imgs, self.mk_imgs, self.fg_mk = self.netG(hard_noise.detach(), hard_class.detach())
+
+                            fake_logits = self.netsD[2](self.fg_mk[1].detach())
+                            smax_class = softmax(fake_logits[0], dim = 1)
+
+                            for b_it in range(self.batch_size):	
+                                    all_logits[(self.batch_size * hard_it) + b_it] = smax_class[b_it][my_rand_id[b_it]]
+                            
+                    sorted_val, indices_hard = torch.sort(all_logits)
+                    noise = all_hard_z[indices_hard[0 : self.batch_size]]
+                    self.c_code = all_hard_class[indices_hard[0 : self.batch_size]]
+
+                    self.fake_imgs, self.fg_imgs, self.mk_imgs, self.fg_mk = \
+                        self.netG(noise, self.c_code)
+
+                    self.p_code = child_to_parent(self.c_code, cfg.FINE_GRAINED_CATEGORIES, cfg.SUPER_CATEGORIES)
+
+                    # Update Discriminator networks
+                    errD_total = 0
+                    for i in range(self.num_Ds):
+                            if i == 0 or i == 2:
+                                    errD = self.train_Dnet(i, count)
+                                    errD_total += errD
+
+                    # Update generator network
+                    errG_total = self.train_Gnet(count)
+
+            for p, avg_p in zip(self.netG.parameters(), avg_param_G):
+                        avg_p.mul_(0.999).add_(0.001, p.data)
+            count = count + 1
+
+            if count % cfg.TRAIN.SNAPSHOT_INTERVAL_HARDNEG == 0:
+                save_model(self.netG, avg_param_G, self.netsD, count, self.model_dir)
+                backup_para = copy_G_params(self.netG)
+                load_params(self.netG, avg_param_G)
+
+                self.fake_imgs, self.fg_imgs, self.mk_imgs, self.fg_mk = \
+                    self.netG(fixed_noise, self.c_code)
+                save_img_results(self.imgs_tcpu, (self.fake_imgs + self.fg_imgs + self.mk_imgs + self.fg_mk), self.num_Ds,
+                                 count, self.image_dir, self.summary_writer)
+                #
+                load_params(self.netG, backup_para)
+
+            end_t = time.time()
+
+            if (count % 100) == 0:
+                print('''[%d/%d][%d]
+                             Loss_D: %.2f Loss_G: %.2f Time: %.2fs
+                          '''  
+                      % (count, cfg.TRAIN.HARDNEG_MAX_ITER, self.num_batches,
+                         errD_total.data[0], errG_total.data[0],
+                         end_t - start_t))
+
+            if (count == cfg.TRAIN.HARDNEG_MAX_ITER): # Hard negative training complete
+                    break
 
         save_model(self.netG, avg_param_G, self.netsD, count, self.model_dir)
         self.summary_writer.close()

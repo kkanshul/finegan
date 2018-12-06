@@ -18,7 +18,9 @@ TRAIN:
     NET_D: ''  # Specify the discriminator path to resume training
     BATCH_SIZE: 16
     MAX_EPOCH: 600
+    HARDNEG_MAX_ITER: 1500
     SNAPSHOT_INTERVAL: 4000
+    SNAPSHOT_INTERVAL_HARDNEG: 500
     DISCRIMINATOR_LR: 0.0002
     GENERATOR_LR: 0.0002
 
