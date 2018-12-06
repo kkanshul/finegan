@@ -65,7 +65,6 @@ In `cfg/train.yml`:
 - Specify the training hyperparameters in `TRAIN`.
 - Run `python main.py --cfg cfg/train.yml --gpu 0`
 
-**Note**: As mentioned in the training details of our [paper](https://arxiv.org/abs/1811.11155) (appendix section), we perform hard negative training of FineGAN after the training process described here. We'll release the hard negative training script soon. 
 ## Sample generation results of FineGAN
 ### 1. Stage wise image generation results
 <img src='files/qual_res1.png' align="middle" width=1000>
