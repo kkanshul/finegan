@@ -78,7 +78,7 @@ If you find this code useful in your research, consider citing our work:
 ```
 @inproceedings{singh-arxiv2018,
   title = {FineGAN: Unsupervised Hierarchical Disentanglement for Fine-Grained Object Generation and Discovery},
-  author = {Krishna Kumar Singh, Utkarsh Ojha, and Yong Jae Lee},
+  author = {Krishna Kumar Singh and Utkarsh Ojha and Yong Jae Lee},
   booktitle = {Arxiv},
   year = {2018}
 }
