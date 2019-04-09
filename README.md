@@ -14,7 +14,7 @@ Pytorch implementation for learning to synthesize images in a hierarchical, stag
 [project](http://krsingh.cs.ucdavis.edu/krishna_files/papers/finegan/index.html) |
  [arxiv](https://arxiv.org/abs/1811.11155) | [demo video](https://www.youtube.com/watch?v=tkk0SeWGu-8)
 <br/>
-**[CVPR 2019](cvpr2019.thecvf.com)**
+**[CVPR 2019 (Oral Presentation)](cvpr2019.thecvf.com)**
 ## Architecture
 <br/>
 <img src='files/approach.png' align="middle" width=900>
@@ -78,11 +78,11 @@ In `cfg/train.yml`:
 ## Citation
 If you find this code useful in your research, consider citing our work:
 ```
-@inproceedings{singh-arxiv2018,
+@inproceedings{singh-cvpr2019,
   title = {FineGAN: Unsupervised Hierarchical Disentanglement for Fine-Grained Object Generation and Discovery},
   author = {Krishna Kumar Singh and Utkarsh Ojha and Yong Jae Lee},
-  booktitle = {Arxiv},
-  year = {2018}
+  booktitle = {CVPR},
+  year = {2019}
 }
 ```
 ## Acknowledgement
