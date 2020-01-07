@@ -430,12 +430,13 @@ class FineGAN_trainer(object):
                     save_model(self.netG, avg_param_G, self.netsD, count, self.model_dir)
                     # Save images
                     load_params(self.netG, avg_param_G)
-                    
-                    self.fake_imgs, self.fg_imgs, self.mk_imgs, self.fg_mk = \
-                        self.netG(fixed_noise, self.c_code)
+                    self.netG.eval()
+		    with torch.set_grad_enabled(False):
+                    	self.fake_imgs, self.fg_imgs, self.mk_imgs, self.fg_mk = \
+                        	self.netG(fixed_noise, self.c_code)
                     save_img_results(self.imgs_tcpu, (self.fake_imgs + self.fg_imgs + self.mk_imgs + self.fg_mk), self.num_Ds,
                                      count, self.image_dir, self.summary_writer)
-                    #
+                    self.netG.train()
                     load_params(self.netG, backup_para)
 
             end_t = time.time()
@@ -529,12 +530,13 @@ class FineGAN_trainer(object):
 		backup_para = copy_G_params(self.netG)
                 save_model(self.netG, avg_param_G, self.netsD, count+500000, self.model_dir)
                 load_params(self.netG, avg_param_G)
-
-                self.fake_imgs, self.fg_imgs, self.mk_imgs, self.fg_mk = \
-                    self.netG(fixed_noise, self.c_code)
+		self.netG.eval()
+		with torch.set_grad_enabled(False):
+                	self.fake_imgs, self.fg_imgs, self.mk_imgs, self.fg_mk = \
+                    		self.netG(fixed_noise, self.c_code)
                 save_img_results(self.imgs_tcpu, (self.fake_imgs + self.fg_imgs + self.mk_imgs + self.fg_mk), self.num_Ds,
                                  count, self.image_dir, self.summary_writer)
-                #
+                self.netG.train()
                 load_params(self.netG, backup_para)
 
             end_t = time.time()
