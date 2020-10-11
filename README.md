@@ -12,7 +12,7 @@ Pytorch implementation for learning to synthesize images in a hierarchical, stag
 [Krishna Kumar Singh*](http://krsingh.cs.ucdavis.edu), [Utkarsh Ojha*](https://utkarshojha.github.io/), [Yong Jae Lee](http://web.cs.ucdavis.edu/~yjlee/)
 <br/>
 [project](http://krsingh.cs.ucdavis.edu/krishna_files/papers/finegan/index.html) |
- [arxiv](https://arxiv.org/abs/1811.11155) | [demo video](https://www.youtube.com/watch?v=tkk0SeWGu-8)
+ [arxiv](https://arxiv.org/abs/1811.11155) | [demo video](https://www.youtube.com/watch?v=tkk0SeWGu-8) | [talk video](https://www.youtube.com/watch?v=8qkrPSjONhA&t=51m40s)
 <br/>
 **[CVPR 2019 (Oral Presentation)](http://cvpr2019.thecvf.com/)**
 ## Architecture
