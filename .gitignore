@@ -1,3 +1,5 @@
-models/*
+models/netG
+models/netG.zip
 output/*
-data/*
+data/birds
+data/birds.zip
