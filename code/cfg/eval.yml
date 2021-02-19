@@ -1,0 +1,23 @@
+DATASET_NAME: 'birds'
+SAVE_DIR: '../output/'
+GPU_ID: '3'
+WORKERS: 1  # 4
+
+SUPER_CATEGORIES: 20     # For CUB
+FINE_GRAINED_CATEGORIES: 200   # For CUB
+TEST_CHILD_CLASS: 125      # specify any value [0, FINE_GRAINED_CATEGORIES - 1]
+TEST_PARENT_CLASS: 0      # specify any value [0, SUPER_CATEGORIES - 1]
+TEST_BACKGROUND_CLASS: 0  # specify any value [0, FINE_GRAINED_CATEGORIES - 1]
+TIED_CODES: True          
+
+TRAIN:
+    FLAG: False
+    NET_G: '../models/netG/netG_birds.pth'
+    BATCH_SIZE: 1
+
+
+GAN:
+    DF_DIM: 64
+    GF_DIM: 64
+    Z_DIM: 100
+    R_NUM: 2
