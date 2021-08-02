@@ -50,7 +50,6 @@ def get_imgs(img_path, imsize, bbox=None,
         y2 = np.minimum(height, center_y + r)
         x1 = np.maximum(0, center_x - r)
         x2 = np.minimum(width, center_x + r)
-<<<<<<< HEAD
         fimg = deepcopy(img)
         fimg_arr = np.array(fimg)
         fimg = Image.fromarray(fimg_arr)
@@ -58,15 +57,6 @@ def get_imgs(img_path, imsize, bbox=None,
 
     if transform is not None:
         cimg = transform(cimg)
-=======
-	fimg = deepcopy(img)
-	fimg_arr = np.array(fimg)
-	fimg = Image.fromarray(fimg_arr)
-        cimg = img.crop([x1, y1, x2, y2])
-
-    if transform is not None:
-	cimg = transform(cimg)
->>>>>>> upstream/master
 
     
     retf = []
@@ -104,7 +94,6 @@ def get_imgs(img_path, imsize, bbox=None,
     # random flipping
     random_flag=np.random.randint(2)
     if(random_flag == 0):
-<<<<<<< HEAD
         crop_re_fimg = crop_re_fimg.transpose(Image.FLIP_LEFT_RIGHT)
         flipped_x1 = my_crop_width - warped_x2
         flipped_x2 = my_crop_width - warped_x1
@@ -113,16 +102,6 @@ def get_imgs(img_path, imsize, bbox=None,
 
     retf.append(normalize(crop_re_fimg))
                 
-=======
-	crop_re_fimg = crop_re_fimg.transpose(Image.FLIP_LEFT_RIGHT)
-	flipped_x1 = my_crop_width - warped_x2
-	flipped_x2 = my_crop_width - warped_x1
-	warped_x1 = flipped_x1
-	warped_x2 = flipped_x2
-
-    retf.append(normalize(crop_re_fimg))
-		
->>>>>>> upstream/master
     warped_bbox = []
     warped_bbox.append(warped_y1)
     warped_bbox.append(warped_x1)
@@ -172,11 +151,7 @@ class Dataset(data.Dataset):
         print('Total filenames: ', len(filenames), filenames[0])
         filename_bbox = {img_file[:-4]: [] for img_file in filenames}
         numImgs = len(filenames)
-<<<<<<< HEAD
         for i in range(0, numImgs):
-=======
-        for i in xrange(0, numImgs):
->>>>>>> upstream/master
             bbox = df_bounding_boxes.iloc[i][1:].tolist()
             key = filenames[i][:-4]
             filename_bbox[key] = bbox
@@ -205,13 +180,8 @@ class Dataset(data.Dataset):
                         bbox, self.transform, normalize=self.norm)
 
         rand_class= random.sample(range(cfg.FINE_GRAINED_CATEGORIES),1); # Randomly generating child code during training 
-<<<<<<< HEAD
         c_code = torch.zeros([cfg.FINE_GRAINED_CATEGORIES,])
         c_code[rand_class] = 1
-=======
-	c_code = torch.zeros([cfg.FINE_GRAINED_CATEGORIES,])
-	c_code[rand_class] = 1
->>>>>>> upstream/master
 
         return fimgs, cimgs, c_code, key, warped_bbox 
 

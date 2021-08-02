@@ -2,11 +2,7 @@ CONFIG_NAME: '3stages'
 DATASET_NAME: 'birds'
 DATA_DIR: '../data/birds'
 SAVE_DIR: '../output/vis'
-<<<<<<< HEAD
-GPU_ID: '3'
-=======
 GPU_ID: '0'
->>>>>>> upstream/master
 WORKERS: 4
 
 SUPER_CATEGORIES: 20   # For CUB 
